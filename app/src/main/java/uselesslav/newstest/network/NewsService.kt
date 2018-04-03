@@ -19,13 +19,13 @@ interface NewsService {
      * Получение списка новостных категорий
      */
     @GET("categories")
-    fun getListNewsCategories(): Call<List<NewsCategory>>
+    fun getListNewsCategories(): Call<BodyResponse<NewsCategory>>
 
     /**
      * Получение списка новостей с пэйджингом
      */
     @GET("categories/{id}/news")
-    fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<List<ShortNews>>
+    fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<BodyResponse<ShortNews>>
 
     /**
      * Получение полной информации о новости
