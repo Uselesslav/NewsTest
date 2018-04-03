@@ -2,6 +2,9 @@ package uselesslav.newstest.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Сокращенная версия новости
+ */
 class ShortNews(
         @SerializedName("id")
         val id: Int,

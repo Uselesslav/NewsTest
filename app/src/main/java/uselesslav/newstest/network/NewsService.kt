@@ -10,14 +10,26 @@ import uselesslav.newstest.model.FullNews
 import uselesslav.newstest.model.NewsCategory
 import uselesslav.newstest.model.ShortNews
 
+/**
+ * Интерфейс серверных запросов
+ */
 interface NewsService {
 
+    /**
+     * Получение списка новостных категорий
+     */
     @GET("categories")
     fun getListNewsCategories(): Call<List<NewsCategory>>
 
+    /**
+     * Получение списка новостей с пэйджингом
+     */
     @GET("categories/{id}/news")
     fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<List<ShortNews>>
 
+    /**
+     * Получение полной информации о новости
+     */
     @GET("details")
     fun getFullNews(@Query("id") newsId: Int): Call<FullNews>
 

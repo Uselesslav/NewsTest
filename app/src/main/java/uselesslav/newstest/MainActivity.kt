@@ -1,8 +1,11 @@
 package uselesslav.newstest
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 
+/**
+ * Главный экран. Точка входа в приложение
+ */
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
