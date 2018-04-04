@@ -10,6 +10,7 @@ import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import uselesslav.newstest.R
 import uselesslav.newstest.adapters.NewsCategoriesAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
@@ -19,7 +20,7 @@ import uselesslav.newstest.network.NewsCategoryLoader
 /**
  * Фрагмент с списком категорий
  */
-class NewsCategory : Fragment() {
+class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
     /**
      * Массив новостных категорий
      */
@@ -28,13 +29,23 @@ class NewsCategory : Fragment() {
     /**
      * Адаптер списка
      */
-    private var adapter: NewsCategoriesAdapter = NewsCategoriesAdapter(newsCategories)
+    private var adapter: NewsCategoriesAdapter = NewsCategoriesAdapter(newsCategories, this)
+
+    /**
+     * Индикатор прогресса
+     */
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreate(savedInstanceState)
 
         // Разметка фрагмента
         val rootView = inflater.inflate(R.layout.fragment_news_category, container, false)
+
+        // Заголовок окна
+        activity!!.title = getString(R.string.app_name)
+
+        progressBar = rootView.findViewById(R.id.pb_load)
 
         // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_news_category)
@@ -47,10 +58,34 @@ class NewsCategory : Fragment() {
         return rootView
     }
 
+
+    /**
+     * Обработка нажатия на элемент списка
+     */
+    override fun onItemClick(newsCategory: NewsCategory) {
+
+        // Создание набора отправляемых данных
+        val bundle = Bundle()
+        bundle.putInt(ListNews.id, newsCategory.id)
+        bundle.putString(ListNews.name, newsCategory.name)
+
+        val fragment = ListNews()
+        fragment.arguments = bundle
+
+        // Открытие нужного окна
+        fragmentManager!!
+                .beginTransaction()
+                .replace(R.id.fl_container, fragment)
+                .addToBackStack("ListNews")
+                .commit()
+    }
+
     /**
      * Загрузка списка новостей
      */
     private fun loadNewsCategories(restart: Boolean) {
+
+        progressBar.visibility = ProgressBar.VISIBLE
 
         val callbacks = NewsCategoryCallbacks()
 
@@ -74,6 +109,8 @@ class NewsCategory : Fragment() {
             newsCategories = list
             adapter.changeDataSet(newsCategories)
         }
+
+        progressBar.visibility = ProgressBar.GONE
     }
 
     /**

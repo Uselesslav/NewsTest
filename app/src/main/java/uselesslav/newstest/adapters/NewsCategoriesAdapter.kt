@@ -11,8 +11,18 @@ import uselesslav.newstest.model.NewsCategory
 /**
  * Адаптер списка новостных категорий
  */
-class NewsCategoriesAdapter(private var newsCategories: List<NewsCategory>)
+class NewsCategoriesAdapter(
+        private var newsCategories: List<NewsCategory>,
+        private var onItemClick: OnItemClick)
     : RecyclerView.Adapter<NewsCategoriesAdapter.NewsCategoryHolder>() {
+
+    /**
+     * Реализация обработчика нажатий
+     */
+    private val internalListener = View.OnClickListener { view ->
+        val newsCategory = view.tag as NewsCategory
+        onItemClick.onItemClick(newsCategory)
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsCategoryHolder =
             NewsCategoryHolder(LayoutInflater.from(parent.context).inflate(R.layout.holder_news_category, parent, false))
@@ -23,6 +33,7 @@ class NewsCategoriesAdapter(private var newsCategories: List<NewsCategory>)
         // Заполнение разметки
         holder.bind(newsCategory)
         holder.itemView.tag = newsCategory
+        holder.itemView.setOnClickListener(internalListener)
     }
 
     override fun getItemCount() = newsCategories.size
@@ -33,6 +44,15 @@ class NewsCategoriesAdapter(private var newsCategories: List<NewsCategory>)
     fun changeDataSet(list: List<NewsCategory>) {
         newsCategories = list
         notifyDataSetChanged()
+    }
+
+    /**
+     * Интерфейс обработки нажатий на элемент списка
+     */
+    interface OnItemClick {
+
+        fun onItemClick(newsCategory: NewsCategory)
+
     }
 
     /**
