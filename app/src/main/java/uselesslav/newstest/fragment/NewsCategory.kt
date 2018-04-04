@@ -1,22 +1,20 @@
 package uselesslav.newstest.fragment
 
 import android.os.Bundle
+import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
+import android.support.v4.app.LoaderManager
+import android.support.v4.content.Loader
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import uselesslav.newstest.R
 import uselesslav.newstest.adapters.NewsCategoriesAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
 import uselesslav.newstest.model.NewsCategory
-import uselesslav.newstest.network.BodyResponse
-import uselesslav.newstest.network.NewsService
+import uselesslav.newstest.network.NewsCategoryLoader
 
 /**
  * Фрагмент с списком категорий
@@ -25,7 +23,12 @@ class NewsCategory : Fragment() {
     /**
      * Массив новостных категорий
      */
-    private lateinit var newsCategory: List<NewsCategory>
+    private var newsCategories: List<NewsCategory> = listOf()
+
+    /**
+     * Адаптер списка
+     */
+    private var adapter: NewsCategoriesAdapter = NewsCategoriesAdapter(newsCategories)
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreate(savedInstanceState)
@@ -33,34 +36,69 @@ class NewsCategory : Fragment() {
         // Разметка фрагмента
         val rootView = inflater.inflate(R.layout.fragment_news_category, container, false)
 
-        // TODO сделать нормальную инициализацию
-        newsCategory = listOf()
-
-        // Список
+        // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_news_category)
-        rv.layoutManager = LinearLayoutManager(activity, LinearLayout.VERTICAL, false)
+        rv.layoutManager = LinearLayoutManager(activity)
         rv.addItemDecoration(SimpleDividerItemDecoration(context!!, false))
+        rv.adapter = adapter
 
-        // Запрос списка новостных категорий с сервера
-        val apiService = NewsService.create()
-        val call = apiService.getListNewsCategories()
-
-        call.enqueue(object : Callback<BodyResponse<NewsCategory>> {
-            override fun onFailure(call: Call<BodyResponse<NewsCategory>>?, t: Throwable?) {
-                t?.printStackTrace()
-            }
-
-            override fun onResponse(call: Call<BodyResponse<NewsCategory>>?, response: Response<BodyResponse<NewsCategory>>?) {
-                if (response != null) {
-                    newsCategory = response.body()!!.list.toMutableList()
-
-                    // TODO убрать колхоз
-                    val adapter = NewsCategoriesAdapter(newsCategory)
-                    rv.adapter = adapter
-                }
-            }
-        })
+        loadNewsCategories(false)
 
         return rootView
+    }
+
+    /**
+     * Загрузка списка новостей
+     */
+    private fun loadNewsCategories(restart: Boolean) {
+
+        val callbacks = NewsCategoryCallbacks()
+
+        // Загрузка или перезагрузка данных с сервера
+        if (restart) {
+            loaderManager.restartLoader<List<NewsCategory>>(id, Bundle.EMPTY, callbacks)
+        } else {
+            loaderManager.initLoader<List<NewsCategory>>(id, Bundle.EMPTY, callbacks)
+        }
+    }
+
+    /**
+     * Отображение данных
+     */
+    private fun showNewsCategories(list: List<NewsCategory>?) {
+        if (list == null) {
+            showError(getString(R.string.error_load))
+        } else if (list.isEmpty()) {
+            showError(getString(R.string.empty_list))
+        } else {
+            newsCategories = list
+            adapter.changeDataSet(newsCategories)
+        }
+    }
+
+    /**
+     * Сообщение о ошибке
+     */
+    private fun showError(textError: String) {
+        if (this.view != null) {
+            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_SHORT)
+                    .setAction(getString(R.string.retry), { v -> loadNewsCategories(false) })
+            snackbar.duration = 4000
+            snackbar.show()
+        }
+    }
+
+    internal inner class NewsCategoryCallbacks : LoaderManager.LoaderCallbacks<List<NewsCategory>> {
+
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<NewsCategory>> {
+            return NewsCategoryLoader(context!!)
+        }
+
+        override fun onLoadFinished(loader: Loader<List<NewsCategory>>, data: List<NewsCategory>?) {
+            showNewsCategories(data)
+        }
+
+        override fun onLoaderReset(loader: Loader<List<NewsCategory>>) {
+        }
     }
 }

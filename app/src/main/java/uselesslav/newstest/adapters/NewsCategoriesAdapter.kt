@@ -21,16 +21,34 @@ class NewsCategoriesAdapter(private var newsCategories: List<NewsCategory>)
         val newsCategory = newsCategories[position]
 
         // Заполнение разметки
-        holder.name.text = newsCategory.name
+        holder.bind(newsCategory)
+        holder.itemView.tag = newsCategory
     }
 
     override fun getItemCount() = newsCategories.size
 
     /**
+     * Обновление списка
+     */
+    fun changeDataSet(list: List<NewsCategory>) {
+        newsCategories = list
+        notifyDataSetChanged()
+    }
+
+    /**
      * Элемент списка
      */
     class NewsCategoryHolder(view: View) : RecyclerView.ViewHolder(view) {
-
+        /**
+         * Текстовое поле с названием категории
+         */
         var name: TextView = view.findViewById(R.id.tv_name)
+
+        /**
+         * Заполнение разметки
+         */
+        fun bind(newsCategory: NewsCategory) {
+            name.text = newsCategory.name
+        }
     }
 }
