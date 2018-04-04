@@ -13,9 +13,11 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager
-                .beginTransaction()
-                .add(R.id.fl_container, uselesslav.newstest.fragment.NewsCategory())
-                .commit()
+        if (savedInstanceState == null) {
+            supportFragmentManager
+                    .beginTransaction()
+                    .add(R.id.fl_container, uselesslav.newstest.fragment.NewsCategory())
+                    .commit()
+        }
     }
 }
