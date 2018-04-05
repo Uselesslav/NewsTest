@@ -1,9 +1,12 @@
 <resources>
     <string name="app_name">News (Test)</string>
 
-    <!--Список категорий новостей-->
+    <!--Общие-->
     <string name="retry">Повторить попытку</string>
     <string name="empty.list">Пустой список</string>
     <string name="error.load">Ошибка загрузки</string>
     <string name="error.internet">Отсутствует подключение к Интернету</string>
+
+    <!--Список новостей-->
+    <string name="empty.list.news">В этой категории нет новостей. Ждем-с…</string>
 </resources>

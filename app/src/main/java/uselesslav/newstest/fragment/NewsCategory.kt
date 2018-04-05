@@ -66,8 +66,8 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
 
         // Создание набора отправляемых данных
         val bundle = Bundle()
-        bundle.putInt(ListNews.id, newsCategory.id)
-        bundle.putString(ListNews.name, newsCategory.name)
+        bundle.putInt(ListNews.idKey, newsCategory.id)
+        bundle.putString(ListNews.nameKey, newsCategory.name)
 
         val fragment = ListNews()
         fragment.arguments = bundle
