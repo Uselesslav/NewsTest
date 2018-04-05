@@ -15,7 +15,7 @@ class NewsCategoryLoader(context: Context) : Loader<List<NewsCategory>>(context)
     /**
      * Запрос
      */
-    private var call: Call<BodyResponse<NewsCategory>> = NewsService.Factory.create().getListNewsCategories()
+    private var call: Call<BodyResponseList<NewsCategory>> = NewsService.Factory.create().getListNewsCategories()
 
     /**
      * Список новостей
@@ -33,8 +33,8 @@ class NewsCategoryLoader(context: Context) : Loader<List<NewsCategory>>(context)
 
     override fun onForceLoad() {
         super.onForceLoad()
-        call.clone().enqueue(object : Callback<BodyResponse<NewsCategory>> {
-            override fun onResponse(call: Call<BodyResponse<NewsCategory>>, response: Response<BodyResponse<NewsCategory>>) {
+        call.clone().enqueue(object : Callback<BodyResponseList<NewsCategory>> {
+            override fun onResponse(call: Call<BodyResponseList<NewsCategory>>, response: Response<BodyResponseList<NewsCategory>>) {
                 if (response.body() != null) {
                     if (!response.body()!!.list.isEmpty()) {
                         newsCategories = (response.body()!!.list)
@@ -43,7 +43,7 @@ class NewsCategoryLoader(context: Context) : Loader<List<NewsCategory>>(context)
                 }
             }
 
-            override fun onFailure(call: Call<BodyResponse<NewsCategory>>, t: Throwable) {
+            override fun onFailure(call: Call<BodyResponseList<NewsCategory>>, t: Throwable) {
                 deliverResult(null)
             }
         })

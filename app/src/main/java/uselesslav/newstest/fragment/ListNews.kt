@@ -86,10 +86,10 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
 
         // Создание набора отправляемых данных
         val bundle = Bundle()
-        bundle.putInt(News.id, shortNews.id)
-        bundle.putString(News.title, shortNews.title)
-        bundle.putString(News.date, shortNews.date)
-        bundle.putString(News.shortDescription, shortNews.shortDescription)
+        bundle.putInt(News.idKey, shortNews.id)
+        bundle.putString(News.titleKey, shortNews.title)
+        bundle.putString(News.dateKey, shortNews.date)
+        bundle.putString(News.shortDescriptionKey, shortNews.shortDescription)
 
         val fragment = News()
         fragment.arguments = bundle

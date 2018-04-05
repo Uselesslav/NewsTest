@@ -19,19 +19,19 @@ interface NewsService {
      * Получение списка новостных категорий
      */
     @GET("categories")
-    fun getListNewsCategories(): Call<BodyResponse<NewsCategory>>
+    fun getListNewsCategories(): Call<BodyResponseList<NewsCategory>>
 
     /**
      * Получение списка новостей с пэйджингом
      */
     @GET("categories/{id}/news")
-    fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<BodyResponse<ShortNews>>
+    fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<BodyResponseList<ShortNews>>
 
     /**
      * Получение полной информации о новости
      */
     @GET("details")
-    fun getFullNews(@Query("id") newsId: Int): Call<FullNews>
+    fun getFullNews(@Query("id") newsId: Int): Call<BodyResponseObject<FullNews>>
 
     /**
      * Companion object to create the NewsService

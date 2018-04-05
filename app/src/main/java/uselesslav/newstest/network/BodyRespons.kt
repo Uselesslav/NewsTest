@@ -5,4 +5,9 @@ import com.google.gson.annotations.SerializedName
 /**
  * Список элементов, получаемый с сервера
  */
-class BodyResponse<T>(@SerializedName("list") val list: List<T>)
+class BodyResponseList<T>(@SerializedName("list") val list: List<T>)
+
+/**
+ * Элемент, получаемый с сервера
+ */
+class BodyResponseObject<T>(@SerializedName("news") val response: T)

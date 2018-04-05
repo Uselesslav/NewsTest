@@ -14,7 +14,7 @@ class ListNewsLoader(context: Context, id: Int, page: Int) : Loader<List<ShortNe
     /**
      * Запрос
      */
-    private var call: Call<BodyResponse<ShortNews>> = NewsService.Factory.create().getListShortNews(id, page)
+    private var call: Call<BodyResponseList<ShortNews>> = NewsService.Factory.create().getListShortNews(id, page)
 
     /**
      * Список новостей
@@ -32,8 +32,8 @@ class ListNewsLoader(context: Context, id: Int, page: Int) : Loader<List<ShortNe
 
     override fun onForceLoad() {
         super.onForceLoad()
-        call.clone().enqueue(object : Callback<BodyResponse<ShortNews>> {
-            override fun onResponse(call: Call<BodyResponse<ShortNews>>, response: Response<BodyResponse<ShortNews>>) {
+        call.clone().enqueue(object : Callback<BodyResponseList<ShortNews>> {
+            override fun onResponse(call: Call<BodyResponseList<ShortNews>>, response: Response<BodyResponseList<ShortNews>>) {
                 if (response.body() != null) {
                     if (!response.body()!!.list.isEmpty()) {
                         shortNewsList = (response.body()!!.list)
@@ -44,7 +44,7 @@ class ListNewsLoader(context: Context, id: Int, page: Int) : Loader<List<ShortNe
                 }
             }
 
-            override fun onFailure(call: Call<BodyResponse<ShortNews>>, t: Throwable) {
+            override fun onFailure(call: Call<BodyResponseList<ShortNews>>, t: Throwable) {
                 deliverResult(null)
             }
         })
