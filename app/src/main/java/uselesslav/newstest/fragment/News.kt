@@ -1,10 +1,12 @@
 package uselesslav.newstest.fragment
 
+import android.os.Build
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v4.app.LoaderManager
 import android.support.v4.content.Loader
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,11 +18,15 @@ import uselesslav.newstest.network.NewsLoader
 import uselesslav.newstest.setDate
 import uselesslav.newstest.setTime
 
+
 /**
  * Окно со списком новостей
  */
 class News : Fragment() {
     companion object {
+        /**
+         * Ключи для передачи информации в этот фрагмент
+         */
         const val idKey: String = "id"
         const val titleKey: String = "title"
         const val dateKey: String = "date"
@@ -28,8 +34,19 @@ class News : Fragment() {
     }
 
 
+    /**
+     * id новостной категории
+     */
     var idNews: Int = 0
+
+    /**
+     * Текстовое поле с содержанием новости
+     */
     private lateinit var textViewNews: TextView
+
+    /**
+     * Индикатор прогресса
+     */
     private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -84,7 +101,11 @@ class News : Fragment() {
         if (news == null) {
             showError(getString(R.string.error_load))
         } else {
-            textViewNews.text = news.fullDescription
+            if (Build.VERSION.SDK_INT >= 24) {
+                textViewNews.text = Html.fromHtml(news.fullDescription, Html.FROM_HTML_MODE_LEGACY)
+            } else {
+                textViewNews.text = Html.fromHtml(news.fullDescription)
+            }
         }
         progressBar.visibility = View.GONE
     }
