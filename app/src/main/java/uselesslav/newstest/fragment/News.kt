@@ -8,10 +8,13 @@ import android.support.v4.content.Loader
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.model.FullNews
 import uselesslav.newstest.network.NewsLoader
+import uselesslav.newstest.setDate
+import uselesslav.newstest.setTime
 
 /**
  * Окно со списком новостей
@@ -27,6 +30,7 @@ class News : Fragment() {
 
     var idNews: Int = 0
     private lateinit var textViewNews: TextView
+    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreate(savedInstanceState)
@@ -35,14 +39,21 @@ class News : Fragment() {
         val rootView = inflater.inflate(R.layout.fragment_news, container, false)
 
         val textViewDate = rootView.findViewById<TextView>(R.id.tv_date)
+        val textViewTime = rootView.findViewById<TextView>(R.id.tv_time)
+        progressBar = rootView.findViewById(R.id.pb_load)
         textViewNews = rootView.findViewById(R.id.tv_news)
 
         if (this.arguments != null) {
             // Заголовок окна
             activity!!.title = arguments!![titleKey].toString()
+
+            // Получение параметров из предыдущего фрагмента
             idNews = arguments!![idKey] as Int
+
             textViewNews.text = arguments!![shortDescriptionKey].toString()
-            textViewDate.text = arguments!![dateKey].toString()
+
+            textViewDate.setDate(arguments!![dateKey].toString())
+            textViewTime.setTime(arguments!![dateKey].toString())
         }
 
         loadNews(false)
@@ -56,6 +67,7 @@ class News : Fragment() {
     private fun loadNews(restart: Boolean) {
 
         val callbacks = NewsCallbacks()
+        progressBar.visibility = View.VISIBLE
 
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
@@ -74,6 +86,7 @@ class News : Fragment() {
         } else {
             textViewNews.text = news.fullDescription
         }
+        progressBar.visibility = View.GONE
     }
 
     /**

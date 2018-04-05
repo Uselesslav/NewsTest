@@ -32,7 +32,7 @@ class NewsLoader(context: Context, id: Int) : Loader<FullNews>(context) {
 
     override fun onForceLoad() {
         super.onForceLoad()
-        call.enqueue(object : Callback<BodyResponseObject<FullNews>> {
+        call.clone().enqueue(object : Callback<BodyResponseObject<FullNews>> {
             override fun onResponse(call: Call<BodyResponseObject<FullNews>>, response: Response<BodyResponseObject<FullNews>>) {
                 if (response.body() != null) {
                     fullNews = response.body()!!.response

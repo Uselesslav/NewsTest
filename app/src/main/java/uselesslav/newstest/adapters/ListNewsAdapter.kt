@@ -7,9 +7,8 @@ import android.view.ViewGroup
 import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.model.ShortNews
-import java.text.ParseException
-import java.text.SimpleDateFormat
-import java.util.*
+import uselesslav.newstest.setDate
+import uselesslav.newstest.setTime
 
 /**
  * Адаптер списка новостей
@@ -75,35 +74,10 @@ class ListNewsAdapter(
          */
         fun bind(shortNews: ShortNews) {
 
-            val calendar = Calendar.getInstance()
-            val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-            try {
-                calendar.time = dateFormat.parse(shortNews.date)
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-
-            val year = intToString(calendar[Calendar.YEAR])
-            val month = intToString(calendar[Calendar.MONTH])
-            val day = intToString(calendar[Calendar.DAY_OF_MONTH])
-
-            val hour = intToString(calendar[Calendar.HOUR])
-            val minute = intToString(calendar[Calendar.MINUTE])
-            val second = intToString(calendar[Calendar.SECOND])
-
-            date.text = date.resources.getString(R.string.date, day, month, year)
-            time.text = time.resources.getString(R.string.time, hour, minute, second)
-
             title.text = shortNews.title
             shortDescription.text = shortNews.shortDescription
-        }
-
-        private fun intToString(int: Int): String {
-            if (int < 10) {
-                return "0" + int.toString()
-            } else {
-                return int.toString()
-            }
+            date.setDate(shortNews.date)
+            time.setTime(shortNews.date)
         }
     }
 }
