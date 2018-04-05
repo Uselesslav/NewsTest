@@ -143,7 +143,7 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     private fun showError(textError: String) {
         if (this.view != null) {
             val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_SHORT)
-                    .setAction(getString(R.string.retry), { v -> loadNews(false) })
+                    .setAction(getString(R.string.retry), { loadNews(false) })
             snackbar.duration = 4000
             snackbar.show()
         }

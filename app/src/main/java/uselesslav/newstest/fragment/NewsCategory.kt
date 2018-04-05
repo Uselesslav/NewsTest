@@ -119,7 +119,7 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
     private fun showError(textError: String) {
         if (this.view != null) {
             val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_SHORT)
-                    .setAction(getString(R.string.retry), { v -> loadNewsCategories(false) })
+                    .setAction(getString(R.string.retry), { loadNewsCategories(false) })
             snackbar.duration = 4000
             snackbar.show()
         }
