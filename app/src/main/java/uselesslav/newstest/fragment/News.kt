@@ -40,9 +40,14 @@ class News : Fragment() {
     var idNews: Int = 0
 
     /**
-     * Текстовое поле с содержанием новости
+     * Текстовое поле с выжимкой новости
      */
-    private lateinit var textViewNews: TextView
+    private lateinit var textViewShortNews: TextView
+
+    /**
+     * Текстовое поле с полной новостью
+     */
+    private lateinit var textViewFullNews: TextView
 
     /**
      * Индикатор прогресса
@@ -58,7 +63,8 @@ class News : Fragment() {
         val textViewDate = rootView.findViewById<TextView>(R.id.tv_date)
         val textViewTime = rootView.findViewById<TextView>(R.id.tv_time)
         progressBar = rootView.findViewById(R.id.pb_load)
-        textViewNews = rootView.findViewById(R.id.tv_news)
+        textViewShortNews = rootView.findViewById(R.id.tv_short_news)
+        textViewFullNews = rootView.findViewById(R.id.tv_full_news)
 
         if (this.arguments != null) {
             // Заголовок окна
@@ -67,7 +73,7 @@ class News : Fragment() {
             // Получение параметров из предыдущего фрагмента
             idNews = arguments!![idKey] as Int
 
-            textViewNews.text = arguments!![shortDescriptionKey].toString()
+            textViewShortNews.text = resources.getString(R.string.short_news, arguments!![shortDescriptionKey].toString())
 
             textViewDate.setDate(arguments!![dateKey].toString())
             textViewTime.setTime(arguments!![dateKey].toString())
@@ -101,10 +107,11 @@ class News : Fragment() {
         if (news == null) {
             showError(getString(R.string.error_load))
         } else {
+            textViewFullNews.visibility = View.VISIBLE
             if (Build.VERSION.SDK_INT >= 24) {
-                textViewNews.text = Html.fromHtml(news.fullDescription, Html.FROM_HTML_MODE_LEGACY)
+                textViewFullNews.text = Html.fromHtml(news.fullDescription, Html.FROM_HTML_MODE_LEGACY)
             } else {
-                textViewNews.text = Html.fromHtml(news.fullDescription)
+                textViewFullNews.text = Html.fromHtml(news.fullDescription)
             }
         }
         progressBar.visibility = View.GONE

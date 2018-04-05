@@ -11,9 +11,18 @@
         android:padding="@dimen/padding_medium">
 
         <TextView
-            android:id="@+id/tv_news"
+            android:id="@+id/tv_short_news"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:padding="@dimen/padding_10"
+            android:textStyle="italic" />
+
+        <TextView
+            android:id="@+id/tv_full_news"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/text.18"
+            android:visibility="gone"
             android:padding="@dimen/padding_small" />
 
         <TextView

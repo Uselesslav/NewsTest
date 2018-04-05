@@ -11,4 +11,7 @@
     <string name="empty.list.news">В этой категории нет новостей. Ждем-с…</string>
     <string name="time">Время: %s:%s:%s</string>
     <string name="date">Дата: %s.%s.%s</string>
+
+    <!--Новость-->
+    <string name="short.news">Краткое описание новости: \n %s</string>
 </resources>
