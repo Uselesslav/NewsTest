@@ -11,6 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ProgressBar
+import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.adapters.NewsCategoriesAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
@@ -36,6 +37,11 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
      */
     private lateinit var progressBar: ProgressBar
 
+    /**
+     * Текстовое поле с ошибкой
+     */
+    private lateinit var errorTextView: TextView
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreate(savedInstanceState)
 
@@ -46,6 +52,8 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
         activity!!.title = getString(R.string.app_name)
 
         progressBar = rootView.findViewById(R.id.pb_load)
+        errorTextView = rootView.findViewById(R.id.tv_error)
+        errorTextView.setOnClickListener({ v -> loadNewsCategories(true) })
 
         // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_news_category)
@@ -86,6 +94,7 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
     private fun loadNewsCategories(restart: Boolean) {
 
         progressBar.visibility = ProgressBar.VISIBLE
+        errorTextView.visibility = View.GONE
 
         val callbacks = NewsCategoryCallbacks()
 
@@ -105,9 +114,11 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
             showError(getString(R.string.error_load))
         } else if (list.isEmpty()) {
             showError(getString(R.string.empty_list))
+            errorTextView.visibility = View.GONE
         } else {
             newsCategories = list
             adapter.changeDataSet(newsCategories)
+            errorTextView.visibility = View.GONE
         }
 
         progressBar.visibility = ProgressBar.GONE
@@ -118,10 +129,10 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
      */
     private fun showError(textError: String) {
         if (this.view != null) {
-            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_SHORT)
+            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.retry), { loadNewsCategories(false) })
-            snackbar.duration = 4000
             snackbar.show()
+            errorTextView.visibility = View.VISIBLE
         }
     }
 

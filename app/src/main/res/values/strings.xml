@@ -5,7 +5,7 @@
     <string name="retry">Повторить попытку</string>
     <string name="empty.list">Пустой список</string>
     <string name="error.load">Ошибка загрузки</string>
-    <string name="error.internet">Отсутствует подключение к Интернету</string>
+    <string name="error.internet">Проблемы с загрузкой данных :( \n\n Попробовать снова</string>
 
     <!--Список новостей-->
     <string name="empty.list.news">В этой категории нет новостей. Ждем-с…</string>

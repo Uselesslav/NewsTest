@@ -115,9 +115,8 @@ class News : Fragment() {
      */
     private fun showError(textError: String) {
         if (this.view != null) {
-            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_SHORT)
+            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.retry), { loadNews(false) })
-            snackbar.duration = 4000
             snackbar.show()
         }
     }

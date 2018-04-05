@@ -14,4 +14,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center" />
+
+    <TextView
+        android:id="@+id/tv_error"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/error.internet"
+        android:textSize="@dimen/text.18"
+        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>

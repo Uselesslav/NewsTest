@@ -49,9 +49,9 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     private lateinit var progressBar: ProgressBar
 
     /**
-     * Информационное окно
+     * Текстовое поле с ошибкой
      */
-    private lateinit var textInfo: TextView
+    private lateinit var errorTextView: TextView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreate(savedInstanceState)
@@ -66,7 +66,8 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
         }
 
         progressBar = rootView.findViewById(R.id.pb_load)
-        textInfo = rootView.findViewById(R.id.tv_info)
+        errorTextView = rootView.findViewById(R.id.tv_error)
+        errorTextView.setOnClickListener({ v -> loadNews(true) })
 
         // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_short_news)
@@ -107,7 +108,7 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
      */
     private fun loadNews(restart: Boolean) {
 
-        textInfo.visibility = View.GONE
+        errorTextView.visibility = View.GONE
         progressBar.visibility = ProgressBar.VISIBLE
 
         val callbacks = ListNewsCallbacks()
@@ -126,12 +127,14 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     private fun showNews(list: List<ShortNews>?) {
         if (list == null) {
             showError(getString(R.string.error_load))
+            errorTextView.text = getText(R.string.error_internet)
         } else if (list.isEmpty()) {
-            textInfo.visibility = View.VISIBLE
-            showError(getString(R.string.empty_list))
+            errorTextView.visibility = View.VISIBLE
+            errorTextView.text = getText(R.string.empty_list_news)
         } else {
             news = list
             adapter.changeDataSet(news)
+            errorTextView.visibility = View.GONE
         }
 
         progressBar.visibility = ProgressBar.GONE
@@ -142,10 +145,10 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
      */
     private fun showError(textError: String) {
         if (this.view != null) {
-            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_SHORT)
+            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.retry), { loadNews(false) })
-            snackbar.duration = 4000
             snackbar.show()
+            errorTextView.visibility = View.VISIBLE
         }
     }
 
