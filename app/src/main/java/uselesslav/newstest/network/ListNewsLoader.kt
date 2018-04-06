@@ -10,20 +10,34 @@ import uselesslav.newstest.model.ShortNews
 /**
  * Реализация загрузчика данных списка новостей категории
  */
-class ListNewsLoader(context: Context, id: Int, page: Int) : Loader<List<ShortNews>>(context) {
+class ListNewsLoader(
+        context: Context,
+        private val idCategory: Int)
+    : Loader<List<ShortNews>>(context) {
+
     /**
      * Запрос
      */
-    private var call: Call<BodyResponseList<ShortNews>> = NewsService.Factory.create().getListShortNews(id, page)
+    private lateinit var call: Call<BodyResponseList<ShortNews>>
 
     /**
-     * Список новостей
+     * Массив новостей
      */
-    private var shortNewsList: List<ShortNews> = listOf()
+    private var shortNewsList: MutableList<ShortNews> = mutableListOf()
+
+    /**
+     * Флаг последней страницы
+     */
+    private var isLastPage = false
+
+    /**
+     * Номер страницы
+     */
+    private var page = 0
 
     override fun onStartLoading() {
         super.onStartLoading()
-        if (shortNewsList.size != 0) {
+        if (isLastPage) {
             deliverResult(shortNewsList)
         } else {
             forceLoad()
@@ -32,15 +46,21 @@ class ListNewsLoader(context: Context, id: Int, page: Int) : Loader<List<ShortNe
 
     override fun onForceLoad() {
         super.onForceLoad()
-        call.clone().enqueue(object : Callback<BodyResponseList<ShortNews>> {
+
+        call = NewsService.Factory.create().getListShortNews(idCategory, page)
+        call.enqueue(object : Callback<BodyResponseList<ShortNews>> {
             override fun onResponse(call: Call<BodyResponseList<ShortNews>>, response: Response<BodyResponseList<ShortNews>>) {
                 if (response.body() != null) {
                     if (!response.body()!!.list.isEmpty()) {
-                        shortNewsList = (response.body()!!.list)
-                        deliverResult(shortNewsList)
+                        // Если получаемый с сервера список не пуст, изменение номера
+                        // запрашиваемой страницы и добавление новых элементов к списку
+                        shortNewsList.addAll(response.body()!!.list)
+                        page += 1
                     } else {
-                        deliverResult(listOf())
+                        // Изменение состояния флага, если полученный список пуст
+                        isLastPage = true
                     }
+                    deliverResult(shortNewsList)
                 }
             }
 
@@ -48,6 +68,7 @@ class ListNewsLoader(context: Context, id: Int, page: Int) : Loader<List<ShortNe
                 deliverResult(null)
             }
         })
+
     }
 
     override fun onStopLoading() {

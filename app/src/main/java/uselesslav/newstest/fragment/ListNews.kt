@@ -30,6 +30,9 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
         const val nameKey: String = "name"
     }
 
+    /**
+     * Категория и страница загружаемых новостей
+     */
     var page: Int = 0
     var idCategory = 0
 
@@ -37,6 +40,11 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
      * Массив новостей
      */
     private var news: List<ShortNews> = listOf()
+
+    /**
+     * Флаг загрузки
+     */
+    private var isLoading = false
 
     /**
      * Адаптер списка
@@ -58,6 +66,9 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
 
         // Разметка фрагмента
         val rootView = inflater.inflate(R.layout.fragment_list_news, container, false)
+        progressBar = rootView.findViewById(R.id.pb_load)
+        errorTextView = rootView.findViewById(R.id.tv_error)
+        errorTextView.setOnClickListener({ v -> loadNews(true) })
 
         if (this.arguments != null) {
             // Заголовок окна
@@ -65,15 +76,31 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
             idCategory = arguments!![idKey] as Int
         }
 
-        progressBar = rootView.findViewById(R.id.pb_load)
-        errorTextView = rootView.findViewById(R.id.tv_error)
-        errorTextView.setOnClickListener({ v -> loadNews(true) })
 
         // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_short_news)
-        rv.layoutManager = LinearLayoutManager(activity)
+        val layoutManager = LinearLayoutManager(activity)
+        rv.layoutManager = layoutManager
         rv.addItemDecoration(SimpleDividerItemDecoration(context!!, false))
         rv.adapter = adapter
+
+        rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+
+                val lastvisibleitemposition = layoutManager.findLastVisibleItemPosition()
+
+                if (lastvisibleitemposition == adapter.itemCount - 1) {
+
+                    if (!isLoading) {
+
+                        isLoading = true
+                        page += 1
+                        loadNews(true)
+                    }
+                }
+            }
+        })
 
         loadNews(false)
 
@@ -115,7 +142,11 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
 
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
-            loaderManager.restartLoader<List<ShortNews>>(id, Bundle.EMPTY, callbacks)
+            if (isLoading) {
+                loaderManager.getLoader<List<ShortNews>>(id)!!.startLoading()
+            } else {
+                loaderManager.restartLoader<List<ShortNews>>(id, Bundle.EMPTY, callbacks)
+            }
         } else {
             loaderManager.initLoader<List<ShortNews>>(id, Bundle.EMPTY, callbacks)
         }
@@ -125,19 +156,32 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
      * Отображение данных
      */
     private fun showNews(list: List<ShortNews>?) {
+        //проверка ответа
         if (list == null) {
+            // Если ответ = null, показать ошибку
             showError(getString(R.string.error_load))
-            errorTextView.text = getText(R.string.error_internet)
-        } else if (list.isEmpty()) {
+
+            // Если список пуст, показать текстовое окно
+            if (news.isEmpty()) {
+                errorTextView.text = getText(R.string.error_internet)
+                errorTextView.visibility = View.VISIBLE
+            }
+
+        } else if (list.isEmpty() && news.isEmpty()) {
+            // Если ответ и массив пусты, показать соответствующий текст
             errorTextView.visibility = View.VISIBLE
             errorTextView.text = getText(R.string.empty_list_news)
+
         } else {
+            // Заполнение списка и изменение видимости текстовых полей, если массив ответа не пуст
             news = list
             adapter.changeDataSet(news)
             errorTextView.visibility = View.GONE
         }
 
+        // Изменение состояния флага загрузки и иконки прогресса
         progressBar.visibility = ProgressBar.GONE
+        isLoading = false
     }
 
     /**
@@ -146,16 +190,15 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     private fun showError(textError: String) {
         if (this.view != null) {
             val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.retry), { loadNews(false) })
+                    .setAction(getString(R.string.retry), { loadNews(true) })
             snackbar.show()
-            errorTextView.visibility = View.VISIBLE
         }
     }
 
     internal inner class ListNewsCallbacks : LoaderManager.LoaderCallbacks<List<ShortNews>> {
 
         override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<ShortNews>> {
-            return ListNewsLoader(context!!, idCategory, page)
+            return ListNewsLoader(context!!, idCategory)
         }
 
         override fun onLoadFinished(loader: Loader<List<ShortNews>>, data: List<ShortNews>?) {
