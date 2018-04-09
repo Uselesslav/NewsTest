@@ -3,9 +3,9 @@ package uselesslav.newstest.model
 import com.google.gson.annotations.SerializedName
 
 /**
- * Полная версия новости
+ * Сущность новости
  */
-class FullNews(
+class News(
         @SerializedName("id")
         val id: Int,
         @SerializedName("title")
@@ -15,4 +15,4 @@ class FullNews(
         @SerializedName("shortDescription")
         val shortDescription: String,
         @SerializedName("fullDescription")
-        val fullDescription: String)
+        val fullDescription: String?)
