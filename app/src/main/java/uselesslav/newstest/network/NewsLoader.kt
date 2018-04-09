@@ -5,21 +5,21 @@ import android.support.v4.content.Loader
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import uselesslav.newstest.model.FullNews
+import uselesslav.newstest.model.News
 
 /**
  * Реализация загрузчика новости
  */
-class NewsLoader(context: Context, id: Int) : Loader<FullNews>(context) {
+class NewsLoader(context: Context, id: Int) : Loader<News>(context) {
     /**
      * Запрос
      */
-    private var call: Call<BodyResponseObject<FullNews>> = NewsService.Factory.create().getFullNews(15)
+    private var call: Call<BodyResponseObject<News>> = NewsService.Factory.create().getFullNews(id)
 
     /**
      * Новость
      */
-    private var fullNews: FullNews? = null
+    private var fullNews: News? = null
 
     override fun onStartLoading() {
         super.onStartLoading()
@@ -32,15 +32,15 @@ class NewsLoader(context: Context, id: Int) : Loader<FullNews>(context) {
 
     override fun onForceLoad() {
         super.onForceLoad()
-        call.clone().enqueue(object : Callback<BodyResponseObject<FullNews>> {
-            override fun onResponse(call: Call<BodyResponseObject<FullNews>>, response: Response<BodyResponseObject<FullNews>>) {
+        call.clone().enqueue(object : Callback<BodyResponseObject<News>> {
+            override fun onResponse(call: Call<BodyResponseObject<News>>, response: Response<BodyResponseObject<News>>) {
                 if (response.body() != null) {
                     fullNews = response.body()!!.response
                     deliverResult(fullNews)
                 }
             }
 
-            override fun onFailure(call: Call<BodyResponseObject<FullNews>>, t: Throwable) {
+            override fun onFailure(call: Call<BodyResponseObject<News>>, t: Throwable) {
                 deliverResult(null)
             }
         })

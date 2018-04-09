@@ -15,7 +15,6 @@ import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.adapters.ListNewsAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
-import uselesslav.newstest.model.ShortNews
 import uselesslav.newstest.network.ListNewsLoader
 
 /**
@@ -39,7 +38,7 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     /**
      * Массив новостей
      */
-    private var news: List<ShortNews> = listOf()
+    private var news: List<uselesslav.newstest.model.News> = listOf()
 
     /**
      * Флаг загрузки
@@ -68,7 +67,7 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
         val rootView = inflater.inflate(R.layout.fragment_list_news, container, false)
         progressBar = rootView.findViewById(R.id.pb_load)
         errorTextView = rootView.findViewById(R.id.tv_error)
-        errorTextView.setOnClickListener({ v -> loadNews(true) })
+        errorTextView.setOnClickListener({ loadNews(true) })
 
         if (this.arguments != null) {
             // Заголовок окна
@@ -110,14 +109,14 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     /**
      * Обработка нажатия на элемент списка
      */
-    override fun onItemClick(shortNews: ShortNews) {
+    override fun onItemClick(news: uselesslav.newstest.model.News) {
 
         // Создание набора отправляемых данных
         val bundle = Bundle()
-        bundle.putInt(News.idKey, shortNews.id)
-        bundle.putString(News.titleKey, shortNews.title)
-        bundle.putString(News.dateKey, shortNews.date)
-        bundle.putString(News.shortDescriptionKey, shortNews.shortDescription)
+        bundle.putInt(News.idKey, news.id)
+        bundle.putString(News.titleKey, news.title)
+        bundle.putString(News.dateKey, news.date)
+        bundle.putString(News.shortDescriptionKey, news.shortDescription)
 
         val fragment = News()
         fragment.arguments = bundle
@@ -143,19 +142,19 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
             if (isLoading) {
-                loaderManager.getLoader<List<ShortNews>>(id)!!.startLoading()
+                loaderManager.getLoader<List<uselesslav.newstest.model.News>>(id)!!.startLoading()
             } else {
-                loaderManager.restartLoader<List<ShortNews>>(id, Bundle.EMPTY, callbacks)
+                loaderManager.restartLoader<List<uselesslav.newstest.model.News>>(id, Bundle.EMPTY, callbacks)
             }
         } else {
-            loaderManager.initLoader<List<ShortNews>>(id, Bundle.EMPTY, callbacks)
+            loaderManager.initLoader<List<uselesslav.newstest.model.News>>(id, Bundle.EMPTY, callbacks)
         }
     }
 
     /**
      * Отображение данных
      */
-    private fun showNews(list: List<ShortNews>?) {
+    private fun showNews(list: List<uselesslav.newstest.model.News>?) {
         //проверка ответа
         if (list == null) {
             // Если ответ = null, показать ошибку
@@ -195,17 +194,17 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
         }
     }
 
-    internal inner class ListNewsCallbacks : LoaderManager.LoaderCallbacks<List<ShortNews>> {
+    internal inner class ListNewsCallbacks : LoaderManager.LoaderCallbacks<List<uselesslav.newstest.model.News>> {
 
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<ShortNews>> {
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<uselesslav.newstest.model.News>> {
             return ListNewsLoader(context!!, idCategory)
         }
 
-        override fun onLoadFinished(loader: Loader<List<ShortNews>>, data: List<ShortNews>?) {
+        override fun onLoadFinished(loader: Loader<List<uselesslav.newstest.model.News>>, data: List<uselesslav.newstest.model.News>?) {
             showNews(data)
         }
 
-        override fun onLoaderReset(loader: Loader<List<ShortNews>>) {
+        override fun onLoaderReset(loader: Loader<List<uselesslav.newstest.model.News>>) {
         }
     }
 }

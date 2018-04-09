@@ -13,12 +13,13 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import android.widget.TextView
 import uselesslav.newstest.R
-import uselesslav.newstest.model.FullNews
+import uselesslav.newstest.model.News
 import uselesslav.newstest.network.NewsLoader
 import uselesslav.newstest.setDate
 import uselesslav.newstest.setTime
 
 
+@Suppress("DEPRECATION")
 /**
  * Окно со списком новостей
  */
@@ -94,16 +95,16 @@ class News : Fragment() {
 
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
-            loaderManager.restartLoader<FullNews>(id, Bundle.EMPTY, callbacks)
+            loaderManager.restartLoader<News>(id, Bundle.EMPTY, callbacks)
         } else {
-            loaderManager.initLoader<FullNews>(id, Bundle.EMPTY, callbacks)
+            loaderManager.initLoader<News>(id, Bundle.EMPTY, callbacks)
         }
     }
 
     /**
      * Отображение данных
      */
-    private fun showNews(news: FullNews?) {
+    private fun showNews(news: News?) {
         if (news == null) {
             showError(getString(R.string.error_load))
         } else {
@@ -122,23 +123,23 @@ class News : Fragment() {
      */
     private fun showError(textError: String) {
         if (this.view != null) {
-            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.retry), { loadNews(false) })
-            snackbar.show()
+            val snackBar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.retry), { loadNews(true) })
+            snackBar.show()
         }
     }
 
-    internal inner class NewsCallbacks : LoaderManager.LoaderCallbacks<FullNews> {
+    internal inner class NewsCallbacks : LoaderManager.LoaderCallbacks<News> {
 
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<FullNews> {
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<News> {
             return NewsLoader(context!!, idNews)
         }
 
-        override fun onLoadFinished(loader: Loader<FullNews>, data: FullNews?) {
+        override fun onLoadFinished(loader: Loader<News>, data: News?) {
             showNews(data)
         }
 
-        override fun onLoaderReset(loader: Loader<FullNews>) {
+        override fun onLoaderReset(loader: Loader<News>) {
         }
     }
 }

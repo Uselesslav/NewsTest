@@ -42,10 +42,10 @@ fun TextView.setDate(date: String) {
  * Добавляет нули в дату, если дата состоит из одной цифры
  */
 private fun intToString(int: Int): String {
-    if (int < 10) {
-        return "0" + int.toString()
+    return if (int < 10) {
+        "0" + int.toString()
     } else {
-        return int.toString()
+        int.toString()
     }
 }
 

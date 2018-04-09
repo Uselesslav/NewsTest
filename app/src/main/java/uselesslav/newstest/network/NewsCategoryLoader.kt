@@ -24,7 +24,7 @@ class NewsCategoryLoader(context: Context) : Loader<List<NewsCategory>>(context)
 
     override fun onStartLoading() {
         super.onStartLoading()
-        if (newsCategories.size != 0) {
+        if (newsCategories.isNotEmpty()) {
             deliverResult(newsCategories)
         } else {
             forceLoad()
@@ -33,7 +33,7 @@ class NewsCategoryLoader(context: Context) : Loader<List<NewsCategory>>(context)
 
     override fun onForceLoad() {
         super.onForceLoad()
-        call.clone().enqueue(object : Callback<BodyResponseList<NewsCategory>> {
+        call.enqueue(object : Callback<BodyResponseList<NewsCategory>> {
             override fun onResponse(call: Call<BodyResponseList<NewsCategory>>, response: Response<BodyResponseList<NewsCategory>>) {
                 if (response.body() != null) {
                     if (!response.body()!!.list.isEmpty()) {

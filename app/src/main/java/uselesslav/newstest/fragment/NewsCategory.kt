@@ -53,7 +53,7 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
 
         progressBar = rootView.findViewById(R.id.pb_load)
         errorTextView = rootView.findViewById(R.id.tv_error)
-        errorTextView.setOnClickListener({ v -> loadNewsCategories(true) })
+        errorTextView.setOnClickListener({ loadNewsCategories(true) })
 
         // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_news_category)
@@ -110,15 +110,17 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
      * Отображение данных
      */
     private fun showNewsCategories(list: List<NewsCategory>?) {
-        if (list == null) {
-            showError(getString(R.string.error_load))
-        } else if (list.isEmpty()) {
-            showError(getString(R.string.empty_list))
-            errorTextView.visibility = View.GONE
-        } else {
-            newsCategories = list
-            adapter.changeDataSet(newsCategories)
-            errorTextView.visibility = View.GONE
+        when {
+            list == null -> showError(getString(R.string.error_load))
+            list.isEmpty() -> {
+                showError(getString(R.string.empty_list))
+                errorTextView.visibility = View.GONE
+            }
+            else -> {
+                newsCategories = list
+                adapter.changeDataSet(newsCategories)
+                errorTextView.visibility = View.GONE
+            }
         }
 
         progressBar.visibility = ProgressBar.GONE
@@ -129,9 +131,9 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
      */
     private fun showError(textError: String) {
         if (this.view != null) {
-            val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.retry), { loadNewsCategories(false) })
-            snackbar.show()
+            val snackBar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
+                    .setAction(getString(R.string.retry), { loadNewsCategories(true) })
+            snackBar.show()
             errorTextView.visibility = View.VISIBLE
         }
     }

@@ -6,9 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import uselesslav.newstest.model.FullNews
+import uselesslav.newstest.model.News
 import uselesslav.newstest.model.NewsCategory
-import uselesslav.newstest.model.ShortNews
 
 /**
  * Интерфейс серверных запросов
@@ -25,13 +24,13 @@ interface NewsService {
      * Получение списка новостей с пэйджингом
      */
     @GET("categories/{id}/news")
-    fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<BodyResponseList<ShortNews>>
+    fun getListShortNews(@Path("id") categoryId: Int, @Query("page") page: Int): Call<BodyResponseList<News>>
 
     /**
      * Получение полной информации о новости
      */
     @GET("details")
-    fun getFullNews(@Query("id") newsId: Int): Call<BodyResponseObject<FullNews>>
+    fun getFullNews(@Query("id") newsId: Int): Call<BodyResponseObject<News>>
 
     /**
      * Companion object to create the NewsService
@@ -40,14 +39,14 @@ interface NewsService {
         /**
          * URL
          */
-        private val baseURL: String = "http://testtask.sebbia.com/v1/news/"
+        private const val baseURL: String = "http://testtask.sebbia.com/v1/news/"
 
         /**
          * Фабричный метод
          */
         fun create(): NewsService = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
-                .baseUrl(baseURL)
+                .baseUrl(this.baseURL)
                 .build().create(NewsService::class.java)
     }
 }

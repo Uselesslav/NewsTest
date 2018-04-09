@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import uselesslav.newstest.R
-import uselesslav.newstest.model.ShortNews
+import uselesslav.newstest.model.News
 import uselesslav.newstest.setDate
 import uselesslav.newstest.setTime
 
@@ -14,7 +14,7 @@ import uselesslav.newstest.setTime
  * Адаптер списка новостей
  */
 class ListNewsAdapter(
-        private var shortNews: List<ShortNews>,
+        private var shortNews: List<News>,
         private var onItemClick: OnItemClick)
     : RecyclerView.Adapter<ListNewsAdapter.NewsHolder>() {
 
@@ -22,7 +22,7 @@ class ListNewsAdapter(
      * Реализация обработчика нажатий
      */
     private val internalListener = View.OnClickListener { view ->
-        val shortNews = view.tag as ShortNews
+        val shortNews = view.tag as News
         onItemClick.onItemClick(shortNews)
     }
 
@@ -43,7 +43,7 @@ class ListNewsAdapter(
     /**
      * Обновление списка
      */
-    fun changeDataSet(list: List<ShortNews>) {
+    fun changeDataSet(list: List<News>) {
         shortNews = list
         notifyDataSetChanged()
     }
@@ -53,7 +53,7 @@ class ListNewsAdapter(
      */
     interface OnItemClick {
 
-        fun onItemClick(news: ShortNews)
+        fun onItemClick(news: News)
 
     }
 
@@ -64,15 +64,15 @@ class ListNewsAdapter(
         /**
          * Текстовые поля
          */
-        var title: TextView = view.findViewById(R.id.tv_title)
-        var shortDescription: TextView = view.findViewById(R.id.tv_short_description)
-        var date: TextView = view.findViewById(R.id.tv_date)
-        var time: TextView = view.findViewById(R.id.tv_time)
+        private var title: TextView = view.findViewById(R.id.tv_title)
+        private var shortDescription: TextView = view.findViewById(R.id.tv_short_description)
+        private var date: TextView = view.findViewById(R.id.tv_date)
+        private var time: TextView = view.findViewById(R.id.tv_time)
 
         /**
          * Заполнение разметки
          */
-        fun bind(shortNews: ShortNews) {
+        fun bind(shortNews: News) {
 
             title.text = shortNews.title
             shortDescription.text = shortNews.shortDescription
