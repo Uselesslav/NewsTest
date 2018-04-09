@@ -12,11 +12,7 @@ import uselesslav.newstest.R
  */
 class SimpleDividerItemDecoration(context: Context, private val mDrawTopDivider: Boolean) : RecyclerView.ItemDecoration() {
 
-    private val mDivider: Drawable?
-
-    init {
-        mDivider = ContextCompat.getDrawable(context, R.drawable.divider)
-    }
+    private val divider: Drawable? = ContextCompat.getDrawable(context, R.drawable.divider)
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
         val left = parent.paddingLeft
@@ -29,15 +25,15 @@ class SimpleDividerItemDecoration(context: Context, private val mDrawTopDivider:
             val params = child.layoutParams as RecyclerView.LayoutParams
 
             val top: Int
-            if (mDrawTopDivider) {
-                top = child.top
+            top = if (mDrawTopDivider) {
+                child.top
             } else {
-                top = child.bottom + params.bottomMargin
+                child.bottom + params.bottomMargin
             }
-            val bottom = top + mDivider!!.intrinsicHeight
+            val bottom = top + divider!!.intrinsicHeight
 
-            mDivider.setBounds(left, top, right, bottom)
-            mDivider.draw(c)
+            divider.setBounds(left, top, right, bottom)
+            divider.draw(c)
         }
     }
 }
