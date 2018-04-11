@@ -3,8 +3,6 @@ package uselesslav.newstest.fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -16,6 +14,7 @@ import uselesslav.newstest.R
 import uselesslav.newstest.adapters.NewsCategoriesAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
 import uselesslav.newstest.model.NewsCategory
+import uselesslav.newstest.network.CallBacks
 import uselesslav.newstest.network.NewsCategoryLoader
 
 /**
@@ -96,7 +95,24 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
         progressBar.visibility = ProgressBar.VISIBLE
         errorTextView.visibility = View.GONE
 
-        val callbacks = NewsCategoryCallbacks()
+        val callbacks = CallBacks(
+                NewsCategoryLoader(context!!),
+                { list ->
+                    when {
+                        list == null -> showError(getString(R.string.error_load))
+                        list.isEmpty() -> {
+                            showError(getString(R.string.empty_list))
+                            errorTextView.visibility = View.GONE
+                        }
+                        else -> {
+                            newsCategories = list
+                            adapter.changeDataSet(newsCategories)
+                            errorTextView.visibility = View.GONE
+                        }
+                    }
+
+                    progressBar.visibility = ProgressBar.GONE
+                })
 
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
@@ -104,26 +120,6 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
         } else {
             loaderManager.initLoader<List<NewsCategory>>(id, Bundle.EMPTY, callbacks)
         }
-    }
-
-    /**
-     * Отображение данных
-     */
-    private fun showNewsCategories(list: List<NewsCategory>?) {
-        when {
-            list == null -> showError(getString(R.string.error_load))
-            list.isEmpty() -> {
-                showError(getString(R.string.empty_list))
-                errorTextView.visibility = View.GONE
-            }
-            else -> {
-                newsCategories = list
-                adapter.changeDataSet(newsCategories)
-                errorTextView.visibility = View.GONE
-            }
-        }
-
-        progressBar.visibility = ProgressBar.GONE
     }
 
     /**
@@ -135,20 +131,6 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
                     .setAction(getString(R.string.retry), { loadNewsCategories(true) })
             snackBar.show()
             errorTextView.visibility = View.VISIBLE
-        }
-    }
-
-    internal inner class NewsCategoryCallbacks : LoaderManager.LoaderCallbacks<List<NewsCategory>> {
-
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<NewsCategory>> {
-            return NewsCategoryLoader(context!!)
-        }
-
-        override fun onLoadFinished(loader: Loader<List<NewsCategory>>, data: List<NewsCategory>?) {
-            showNewsCategories(data)
-        }
-
-        override fun onLoaderReset(loader: Loader<List<NewsCategory>>) {
         }
     }
 }

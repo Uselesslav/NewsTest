@@ -3,8 +3,6 @@ package uselesslav.newstest.fragment
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
-import android.support.v4.app.LoaderManager
-import android.support.v4.content.Loader
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -15,6 +13,7 @@ import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.adapters.ListNewsAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
+import uselesslav.newstest.network.CallBacks
 import uselesslav.newstest.network.ListNewsLoader
 
 /**
@@ -30,9 +29,8 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     }
 
     /**
-     * Категория и страница загружаемых новостей
+     * Категория загружаемых новостей
      */
-    var page: Int = 0
     var idCategory = 0
 
     /**
@@ -94,7 +92,6 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
                     if (!isLoading) {
 
                         isLoading = true
-                        page += 1
                         loadNews(true)
                     }
                 }
@@ -137,7 +134,36 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
         errorTextView.visibility = View.GONE
         progressBar.visibility = ProgressBar.VISIBLE
 
-        val callbacks = ListNewsCallbacks()
+        val callbacks = CallBacks(
+                ListNewsLoader(context!!, idCategory),
+                { list ->
+                    //проверка ответа
+                    if (list == null) {
+                        // Если ответ = null, показать ошибку
+                        showError(getString(R.string.error_load))
+
+                        // Если список пуст, показать текстовое окно
+                        if (news.isEmpty()) {
+                            errorTextView.text = getText(R.string.error_internet)
+                            errorTextView.visibility = View.VISIBLE
+                        }
+
+                    } else if (list.isEmpty() && news.isEmpty()) {
+                        // Если ответ и массив пусты, показать соответствующий текст
+                        errorTextView.visibility = View.VISIBLE
+                        errorTextView.text = getText(R.string.empty_list_news)
+
+                    } else {
+                        // Заполнение списка и изменение видимости текстовых полей, если массив ответа не пуст
+                        news = list
+                        adapter.changeDataSet(news)
+                        errorTextView.visibility = View.GONE
+                    }
+
+                    // Изменение состояния флага загрузки и иконки прогресса
+                    progressBar.visibility = ProgressBar.GONE
+                    isLoading = false
+                })
 
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
@@ -152,38 +178,6 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
     }
 
     /**
-     * Отображение данных
-     */
-    private fun showNews(list: List<uselesslav.newstest.model.News>?) {
-        //проверка ответа
-        if (list == null) {
-            // Если ответ = null, показать ошибку
-            showError(getString(R.string.error_load))
-
-            // Если список пуст, показать текстовое окно
-            if (news.isEmpty()) {
-                errorTextView.text = getText(R.string.error_internet)
-                errorTextView.visibility = View.VISIBLE
-            }
-
-        } else if (list.isEmpty() && news.isEmpty()) {
-            // Если ответ и массив пусты, показать соответствующий текст
-            errorTextView.visibility = View.VISIBLE
-            errorTextView.text = getText(R.string.empty_list_news)
-
-        } else {
-            // Заполнение списка и изменение видимости текстовых полей, если массив ответа не пуст
-            news = list
-            adapter.changeDataSet(news)
-            errorTextView.visibility = View.GONE
-        }
-
-        // Изменение состояния флага загрузки и иконки прогресса
-        progressBar.visibility = ProgressBar.GONE
-        isLoading = false
-    }
-
-    /**
      * Сообщение о ошибке
      */
     private fun showError(textError: String) {
@@ -191,20 +185,6 @@ class ListNews : Fragment(), ListNewsAdapter.OnItemClick {
             val snackbar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
                     .setAction(getString(R.string.retry), { loadNews(true) })
             snackbar.show()
-        }
-    }
-
-    internal inner class ListNewsCallbacks : LoaderManager.LoaderCallbacks<List<uselesslav.newstest.model.News>> {
-
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<List<uselesslav.newstest.model.News>> {
-            return ListNewsLoader(context!!, idCategory)
-        }
-
-        override fun onLoadFinished(loader: Loader<List<uselesslav.newstest.model.News>>, data: List<uselesslav.newstest.model.News>?) {
-            showNews(data)
-        }
-
-        override fun onLoaderReset(loader: Loader<List<uselesslav.newstest.model.News>>) {
         }
     }
 }

@@ -15,4 +15,4 @@ class News(
         @SerializedName("shortDescription")
         val shortDescription: String,
         @SerializedName("fullDescription")
-        val fullDescription: String?)
+        val fullDescription: String = "")
