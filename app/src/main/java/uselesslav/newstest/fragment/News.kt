@@ -2,13 +2,10 @@ package uselesslav.newstest.fragment
 
 import android.os.Build
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.model.News
@@ -22,7 +19,7 @@ import uselesslav.newstest.setTime
 /**
  * Окно со списком новостей
  */
-class News : Fragment() {
+class News : BaseFragment() {
     companion object {
         /**
          * Ключи для передачи информации в этот фрагмент
@@ -47,11 +44,6 @@ class News : Fragment() {
      * Текстовое поле с полной новостью
      */
     private lateinit var textViewFullNews: TextView
-
-    /**
-     * Индикатор прогресса
-     */
-    private lateinit var progressBar: ProgressBar
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         super.onCreate(savedInstanceState)
@@ -81,7 +73,7 @@ class News : Fragment() {
             textViewTime.setTime(news!!.date)
         }
 
-        loadNews(false)
+        load(false)
 
         return rootView
     }
@@ -89,19 +81,20 @@ class News : Fragment() {
     /**
      * Загрузка новости
      */
-    private fun loadNews(restart: Boolean) {
+    override fun load(restart: Boolean) {
 
         val callbacks = CallBacks(
                 NewsLoader(context!!, news!!.id),
                 { news ->
-                    if (news == null) {
-                        showError(getString(R.string.error_load))
-                    } else {
-                        textViewFullNews.visibility = View.VISIBLE
-                        if (Build.VERSION.SDK_INT >= 24) {
-                            textViewFullNews.text = Html.fromHtml(news.fullDescription, Html.FROM_HTML_MODE_LEGACY)
-                        } else {
-                            textViewFullNews.text = Html.fromHtml(news.fullDescription)
+                    when (news) {
+                        null -> showError(getString(R.string.error_load))
+                        else -> {
+                            textViewFullNews.visibility = View.VISIBLE
+                            if (Build.VERSION.SDK_INT >= 24) {
+                                textViewFullNews.text = Html.fromHtml(news.fullDescription, Html.FROM_HTML_MODE_LEGACY)
+                            } else {
+                                textViewFullNews.text = Html.fromHtml(news.fullDescription)
+                            }
                         }
                     }
                     progressBar.visibility = View.GONE
@@ -114,17 +107,6 @@ class News : Fragment() {
             loaderManager.restartLoader<News>(id, Bundle.EMPTY, callbacks)
         } else {
             loaderManager.initLoader<News>(id, Bundle.EMPTY, callbacks)
-        }
-    }
-
-    /**
-     * Сообщение о ошибке
-     */
-    private fun showError(textError: String) {
-        if (this.view != null) {
-            val snackBar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.retry), { loadNews(true) })
-            snackBar.show()
         }
     }
 }

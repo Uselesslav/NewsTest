@@ -1,8 +1,6 @@
 package uselesslav.newstest.fragment
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
-import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -20,7 +18,7 @@ import uselesslav.newstest.network.NewsCategoryLoader
 /**
  * Фрагмент с списком категорий
  */
-class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
+class NewsCategory : BaseFragment(), NewsCategoriesAdapter.OnItemClick {
     /**
      * Массив новостных категорий
      */
@@ -30,11 +28,6 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
      * Адаптер списка
      */
     private var adapter: NewsCategoriesAdapter = NewsCategoriesAdapter(newsCategories, this)
-
-    /**
-     * Индикатор прогресса
-     */
-    private lateinit var progressBar: ProgressBar
 
     /**
      * Текстовое поле с ошибкой
@@ -52,7 +45,7 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
 
         progressBar = rootView.findViewById(R.id.pb_load)
         errorTextView = rootView.findViewById(R.id.tv_error)
-        errorTextView.setOnClickListener({ loadNewsCategories(true) })
+        errorTextView.setOnClickListener({ load(true) })
 
         // Инициализация списка
         val rv = rootView.findViewById<RecyclerView>(R.id.rv_news_category)
@@ -60,7 +53,7 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
         rv.addItemDecoration(SimpleDividerItemDecoration(context!!, false))
         rv.adapter = adapter
 
-        loadNewsCategories(false)
+        load(false)
 
         return rootView
     }
@@ -90,7 +83,7 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
     /**
      * Загрузка списка новостей
      */
-    private fun loadNewsCategories(restart: Boolean) {
+    override fun load(restart: Boolean) {
 
         progressBar.visibility = ProgressBar.VISIBLE
         errorTextView.visibility = View.GONE
@@ -119,18 +112,6 @@ class NewsCategory : Fragment(), NewsCategoriesAdapter.OnItemClick {
             loaderManager.restartLoader<List<NewsCategory>>(id, Bundle.EMPTY, callbacks)
         } else {
             loaderManager.initLoader<List<NewsCategory>>(id, Bundle.EMPTY, callbacks)
-        }
-    }
-
-    /**
-     * Сообщение о ошибке
-     */
-    private fun showError(textError: String) {
-        if (this.view != null) {
-            val snackBar = Snackbar.make(this.view!!, textError, Snackbar.LENGTH_LONG)
-                    .setAction(getString(R.string.retry), { loadNewsCategories(true) })
-            snackBar.show()
-            errorTextView.visibility = View.VISIBLE
         }
     }
 }
