@@ -1,4 +1,4 @@
-package uselesslav.newstest.fragment
+package uselesslav.newstest.fragments
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -12,7 +12,7 @@ import uselesslav.newstest.R
 import uselesslav.newstest.adapters.ListNewsAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
 import uselesslav.newstest.network.CallBacks
-import uselesslav.newstest.network.ListNewsLoader
+import uselesslav.newstest.network.loaders.ListNewsLoader
 
 /**
  * Список новостей конкретной категории
@@ -34,7 +34,7 @@ class ListNews : BaseFragment(), ListNewsAdapter.OnItemClick {
     /**
      * Массив новостей
      */
-    private var news: List<uselesslav.newstest.model.News> = listOf()
+    private var news: List<uselesslav.newstest.models.News> = listOf()
 
     /**
      * Флаг загрузки
@@ -100,7 +100,7 @@ class ListNews : BaseFragment(), ListNewsAdapter.OnItemClick {
     /**
      * Обработка нажатия на элемент списка
      */
-    override fun onItemClick(news: uselesslav.newstest.model.News) {
+    override fun onItemClick(news: uselesslav.newstest.models.News) {
 
         // Создание набора отправляемых данных
         val bundle = Bundle()
@@ -133,7 +133,7 @@ class ListNews : BaseFragment(), ListNewsAdapter.OnItemClick {
                 { list ->
                     //проверка ответа
                     when {
-                        // Если ответ = null, показать ошибку
+                    // Если ответ = null, показать ошибку
                         list == null -> {
                             showError(getString(R.string.error_load))
 
@@ -144,13 +144,13 @@ class ListNews : BaseFragment(), ListNewsAdapter.OnItemClick {
                             }
                         }
 
-                        // Если ответ и массив пусты, показать соответствующий текст
+                    // Если ответ и массив пусты, показать соответствующий текст
                         list.isEmpty() && news.isEmpty() -> {
                             errorTextView.visibility = View.VISIBLE
                             errorTextView.text = getText(R.string.empty_list_news)
                         }
 
-                        // Заполнение списка и изменение видимости текстовых полей, если массив ответа не пуст
+                    // Заполнение списка и изменение видимости текстовых полей, если массив ответа не пуст
                         else -> {
                             news = list
                             adapter.changeDataSet(news)
@@ -166,12 +166,12 @@ class ListNews : BaseFragment(), ListNewsAdapter.OnItemClick {
         // Загрузка или перезагрузка данных с сервера
         if (restart) {
             if (isLoading) {
-                loaderManager.getLoader<List<uselesslav.newstest.model.News>>(id)!!.startLoading()
+                loaderManager.getLoader<List<uselesslav.newstest.models.News>>(id)!!.abandon()
             } else {
-                loaderManager.restartLoader<List<uselesslav.newstest.model.News>>(id, Bundle.EMPTY, callbacks)
+                loaderManager.restartLoader<List<uselesslav.newstest.models.News>>(id, Bundle.EMPTY, callbacks)
             }
         } else {
-            loaderManager.initLoader<List<uselesslav.newstest.model.News>>(id, Bundle.EMPTY, callbacks)
+            loaderManager.initLoader<List<uselesslav.newstest.models.News>>(id, Bundle.EMPTY, callbacks)
         }
     }
 }

@@ -1,4 +1,4 @@
-package uselesslav.newstest.fragment
+package uselesslav.newstest.fragments
 
 import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment

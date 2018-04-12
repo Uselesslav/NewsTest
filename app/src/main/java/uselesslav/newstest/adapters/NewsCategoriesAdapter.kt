@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import uselesslav.newstest.R
-import uselesslav.newstest.model.NewsCategory
+import uselesslav.newstest.models.NewsCategory
 
 /**
  * Адаптер списка новостных категорий

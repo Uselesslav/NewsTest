@@ -1,11 +1,13 @@
-package uselesslav.newstest.network
+package uselesslav.newstest.network.loaders
 
 import android.content.Context
 import android.support.v4.content.Loader
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import uselesslav.newstest.model.NewsCategory
+import uselesslav.newstest.models.NewsCategory
+import uselesslav.newstest.network.BodyResponseList
+import uselesslav.newstest.network.NewsService
 
 /**
  * Реализация загрузчика данных о списке новостных категорий
@@ -15,7 +17,7 @@ class NewsCategoryLoader(context: Context) : Loader<List<NewsCategory>>(context)
     /**
      * Запрос
      */
-    private var call: Call<BodyResponseList<NewsCategory>> = NewsService.Factory.create().getListNewsCategories()
+    private var call: Call<BodyResponseList<NewsCategory>> = NewsService.create().getListNewsCategories()
 
     /**
      * Список новостей

@@ -16,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager
                     .beginTransaction()
-                    .add(R.id.fl_container, uselesslav.newstest.fragment.NewsCategory())
+                    .add(R.id.fl_container, uselesslav.newstest.fragments.NewsCategory())
                     .commit()
         }
     }

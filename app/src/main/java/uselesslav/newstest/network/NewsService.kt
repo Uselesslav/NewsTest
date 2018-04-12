@@ -6,8 +6,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
-import uselesslav.newstest.model.News
-import uselesslav.newstest.model.NewsCategory
+import uselesslav.newstest.models.News
+import uselesslav.newstest.models.NewsCategory
 
 /**
  * Интерфейс серверных запросов

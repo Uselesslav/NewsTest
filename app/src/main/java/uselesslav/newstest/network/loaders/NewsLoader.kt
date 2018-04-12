@@ -1,11 +1,13 @@
-package uselesslav.newstest.network
+package uselesslav.newstest.network.loaders
 
 import android.content.Context
 import android.support.v4.content.Loader
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import uselesslav.newstest.model.News
+import uselesslav.newstest.models.News
+import uselesslav.newstest.network.BodyResponseObject
+import uselesslav.newstest.network.NewsService
 
 /**
  * Реализация загрузчика новости
@@ -14,7 +16,7 @@ class NewsLoader(context: Context, id: Int) : Loader<News>(context) {
     /**
      * Запрос
      */
-    private var call: Call<BodyResponseObject<News>> = NewsService.Factory.create().getFullNews(id)
+    private var call: Call<BodyResponseObject<News>> = NewsService.create().getFullNews(id)
 
     /**
      * Новость

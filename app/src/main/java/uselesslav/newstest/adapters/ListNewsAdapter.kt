@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import uselesslav.newstest.R
-import uselesslav.newstest.model.News
+import uselesslav.newstest.models.News
 import uselesslav.newstest.setDate
 import uselesslav.newstest.setTime
 

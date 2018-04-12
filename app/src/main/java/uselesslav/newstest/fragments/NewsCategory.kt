@@ -1,4 +1,4 @@
-package uselesslav.newstest.fragment
+package uselesslav.newstest.fragments
 
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
@@ -11,9 +11,9 @@ import android.widget.TextView
 import uselesslav.newstest.R
 import uselesslav.newstest.adapters.NewsCategoriesAdapter
 import uselesslav.newstest.adapters.SimpleDividerItemDecoration
-import uselesslav.newstest.model.NewsCategory
+import uselesslav.newstest.models.NewsCategory
 import uselesslav.newstest.network.CallBacks
-import uselesslav.newstest.network.NewsCategoryLoader
+import uselesslav.newstest.network.loaders.NewsCategoryLoader
 
 /**
  * Фрагмент с списком категорий

@@ -1,4 +1,4 @@
-package uselesslav.newstest.fragment
+package uselesslav.newstest.fragments
 
 import android.os.Build
 import android.os.Bundle
@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import uselesslav.newstest.R
-import uselesslav.newstest.model.News
+import uselesslav.newstest.models.News
 import uselesslav.newstest.network.CallBacks
-import uselesslav.newstest.network.NewsLoader
+import uselesslav.newstest.network.loaders.NewsLoader
 import uselesslav.newstest.setDate
 import uselesslav.newstest.setTime
 
@@ -59,7 +59,7 @@ class News : BaseFragment() {
 
         if (this.arguments != null) {
             // Создание объекта новости из полученных данных
-            news = uselesslav.newstest.model.News(
+            news = uselesslav.newstest.models.News(
                     arguments!![idKey] as Int,
                     arguments!![titleKey].toString(),
                     arguments!![dateKey].toString(),

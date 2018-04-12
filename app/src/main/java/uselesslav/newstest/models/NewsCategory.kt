@@ -1,4 +1,4 @@
-package uselesslav.newstest.model
+package uselesslav.newstest.models
 
 import com.google.gson.annotations.SerializedName
 

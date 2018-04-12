@@ -15,11 +15,7 @@ class SimpleDividerItemDecoration(context: Context, private val mDrawTopDivider:
     private val divider: Drawable? = ContextCompat.getDrawable(context, R.drawable.divider)
 
     override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State?) {
-        val left = parent.paddingLeft
-        val right = parent.width - parent.paddingRight
-
-        val childCount = parent.childCount
-        for (i in 0 until childCount) {
+        for (i in 0 until parent.childCount) {
             val child = parent.getChildAt(i)
 
             val params = child.layoutParams as RecyclerView.LayoutParams
@@ -32,7 +28,11 @@ class SimpleDividerItemDecoration(context: Context, private val mDrawTopDivider:
             }
             val bottom = top + divider!!.intrinsicHeight
 
-            divider.setBounds(left, top, right, bottom)
+            divider.setBounds(
+                    parent.paddingLeft,
+                    top,
+                    parent.width - parent.paddingRight,
+                    bottom)
             divider.draw(c)
         }
     }
