@@ -92,7 +92,15 @@ class NewsCategory : BaseFragment(), NewsCategoriesAdapter.OnItemClick {
                 NewsCategoryLoader(context!!),
                 { list ->
                     when {
-                        list == null -> showError(getString(R.string.error_load))
+                        list == null -> {
+                            showError(getString(R.string.error_load))
+
+                            // Если список пуст, показать текстовое окно
+                            if (newsCategories.isEmpty()) {
+                                errorTextView.text = getText(R.string.error_internet)
+                                errorTextView.visibility = View.VISIBLE
+                            }
+                        }
                         list.isEmpty() -> {
                             showError(getString(R.string.empty_list))
                             errorTextView.visibility = View.GONE
